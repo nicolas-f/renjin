@@ -1,6 +1,8 @@
 #  File src/library/grDevices/R/xyz.coords.R
 #  Part of the R package, http://www.R-project.org
 #
+#  Copyright (C) 1995-2014 The R Core Team
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
@@ -17,7 +19,7 @@
 ## Both xy.coords() and xyz.coords()  --- should be kept in sync!
 
 xy.coords <-
-    function(x, y=NULL, xlab=NULL, ylab=NULL, log=NULL, recycle = FALSE)
+    function(x, y = NULL, xlab = NULL, ylab = NULL, log = NULL, recycle = FALSE)
 {
     if(is.null(y)) {
 	ylab <- xlab
@@ -25,8 +27,8 @@ xy.coords <-
 	    if (inherits(x, "formula") && length(x) == 3) {
 		ylab <- deparse(x[[2L]])
 		xlab <- deparse(x[[3L]])
-		y <- eval(x[[2L]], environment(x), parent.frame())
-		x <- eval(x[[3L]], environment(x), parent.frame())
+		y <- eval(x[[2L]], environment(x))
+		x <- eval(x[[3L]], environment(x))
 	    }
 	    else stop("invalid first argument")
 	}
@@ -38,8 +40,8 @@ xy.coords <-
 	else if(is.complex(x)) {
 	    y <- Im(x)
 	    x <- Re(x)
-	    xlab <- paste("Re(", ylab, ")", sep="")
-	    ylab <- paste("Im(", ylab, ")", sep="")
+	    xlab <- paste0("Re(", ylab, ")")
+	    ylab <- paste0("Im(", ylab, ")")
 	}
 	else if(is.matrix(x) || is.data.frame(x)) {
 	    x <- data.matrix(x)
@@ -51,8 +53,8 @@ xy.coords <-
 	    else {
 		colnames <- dimnames(x)[[2L]]
 		if(is.null(colnames)) {
-		    xlab <- paste(ylab, "[,1]", sep="")
-		    ylab <- paste(ylab, "[,2]", sep="")
+		    xlab <- paste0(ylab, "[,1]")
+		    ylab <- paste0(ylab, "[,2]")
 		}
 		else {
 		    xlab <- colnames[1L]
@@ -64,8 +66,8 @@ xy.coords <-
 	}
 	else if(is.list(x)) {
             if (all(c("x", "y") %in% names(x))) {
-                xlab <- paste(ylab, "$x", sep="")
-                ylab <- paste(ylab, "$y", sep="")
+                xlab <- paste0(ylab, "$x")
+                ylab <- paste0(ylab, "$y")
                 y <- x[["y"]]
                 x <- x[["x"]]
             } else
@@ -84,9 +86,9 @@ xy.coords <-
     if(length(x) != length(y)) {
 	if(recycle) {
 	    if((nx <- length(x)) < (ny <- length(y)))
-		x <- rep(x, length.out = ny)
+		x <- rep_len(x, ny)
 	    else
-		y <- rep(y, length.out = nx)
+		y <- rep_len(y, nx)
 	}
 	else
 	    stop("'x' and 'y' lengths differ")
@@ -144,9 +146,9 @@ xyz.coords <- function(x, y=NULL, z=NULL, xlab=NULL, ylab=NULL, zlab=NULL,
 	    else { ## >= 3 columns
 		colnames <- dimnames(x)[[2L]]
 		if(is.null(colnames)) {
-		    zlab <- paste(xlab,"[,3]",sep="")
-		    ylab <- paste(xlab,"[,2]",sep="")
-		    xlab <- paste(xlab,"[,1]",sep="")
+		    zlab <- paste0(xlab,"[,3]")
+		    ylab <- paste0(xlab,"[,2]")
+		    xlab <- paste0(xlab,"[,1]")
 		}
 		else {
 		    xlab <- colnames[1L]
@@ -160,9 +162,9 @@ xyz.coords <- function(x, y=NULL, z=NULL, xlab=NULL, ylab=NULL, zlab=NULL,
 	}
 	else if(is.list(x)) {
             if (all(c("x", "y", "z") %in% names(x))) {
-                zlab <- paste(xlab,"$z",sep="")
-                ylab <- paste(xlab,"$y",sep="")
-                xlab <- paste(xlab,"$x",sep="")
+                zlab <- paste0(xlab,"$z")
+                ylab <- paste0(xlab,"$y")
+                xlab <- paste0(xlab,"$x")
                 y <- x[["y"]]
                 z <- x[["z"]]
                 x <- x[["x"]]
@@ -178,16 +180,16 @@ xyz.coords <- function(x, y=NULL, z=NULL, xlab=NULL, ylab=NULL, zlab=NULL,
 	    y <- Im(x)
 	    x <- Re(x)
 	    zlab <- ylab
-	    ylab <- paste("Im(", xlab, ")", sep="")
-	    xlab <- paste("Re(", xlab, ")", sep="")
+	    ylab <- paste0("Im(", xlab, ")")
+	    xlab <- paste0("Re(", xlab, ")")
 	}
 	else if(is.complex(y)) {
 	    z <- x
 	    x <- Re(y)
 	    y <- Im(y)
 	    zlab <- xlab
-	    xlab <- paste("Re(", ylab, ")", sep="")
-	    ylab <- paste("Im(", ylab, ")", sep="")
+	    xlab <- paste0("Re(", ylab, ")")
+	    ylab <- paste0("Im(", ylab, ")")
 	}
 	else {
 	    if(is.factor(x)) x <- as.numeric(x)
@@ -203,9 +205,9 @@ xyz.coords <- function(x, y=NULL, z=NULL, xlab=NULL, ylab=NULL, zlab=NULL,
     if(((xl <- length(x)) != length(y)) || (xl != length(z))) {
 	if(recycle) {
 	    ml <- max(xl, (yl <- length(y)), (zl <- length(z)))
-	    if(xl < ml) x <- rep(x, length.out = ml)
-	    if(yl < ml) y <- rep(y, length.out = ml)
-	    if(zl < ml) z <- rep(z, length.out = ml)
+	    if(xl < ml && !is.null(x)) x <- rep_len(x, ml)
+	    if(yl < ml && !is.null(y)) y <- rep_len(y, ml)
+	    if(zl < ml && !is.null(z)) z <- rep_len(z, ml)
 	}
 	else stop("'x', 'y' and 'z' lengths differ")
     }

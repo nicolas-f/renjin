@@ -240,4 +240,15 @@ public class Stdlib {
     // TODO: implement properly
   }
   
+  public static double strtod(BytePtr s) {
+    return Double.parseDouble(s.nullTerminatedString());
+  }
+  
+  public static int tolower(int c) {
+    return Character.toLowerCase(c);
+  }
+  
+  public static int toupper(int c) {
+    return Character.toUpperCase(c);
+  }
 }

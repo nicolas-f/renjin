@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>renjin-packages</artifactId>
@@ -27,6 +28,11 @@
     </dependency>
     <dependency>
       <groupId>org.renjin</groupId>
+      <artifactId>tools</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.renjin</groupId>
       <artifactId>hamcrest</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
@@ -43,20 +49,22 @@
             <id>build</id>
             <goals>
               <goal>namespace-compile</goal>
+            </goals>
+            <phase>compile</phase>
+            <configuration>
+              <sourceDirectory>R</sourceDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>compile-c-sources</id>
+            <goals>
               <goal>gnur-sources-compile</goal>
             </goals>
             <phase>compile</phase>
-          </execution>
-          <execution>
-            <id>test</id>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <phase>test</phase>
             <configuration>
-              <defaultPackages>
-                <package>grDevices</package>
-              </defaultPackages>
+              <sourceDirectories>
+                <sourceDirectory>src</sourceDirectory>
+              </sourceDirectories>
             </configuration>
           </execution>
         </executions>

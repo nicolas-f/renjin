@@ -1,6 +1,8 @@
 #  File src/library/grDevices/R/cairo.R
 #  Part of the R package, http://www.R-project.org
 #
+#  Copyright (C) 1995-2014 The R Core Team
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
@@ -21,10 +23,9 @@ svg <- function(filename = if(onefile) "Rplots.svg" else "Rplot%03d.svg",
                 antialias = c("default", "none", "gray", "subpixel"))
 {
     if(!checkIntFormat(filename)) stop("invalid 'filename'")
-    new <- list()
     antialiases <- eval(formals()$antialias)
     antialias <- match(match.arg(antialias, antialiases), antialiases)
-    invisible(.External(devCairo, filename, 4L, 72*width, 72*height, pointsize,
+    invisible(.External(C_devCairo, filename, 4L, 72*width, 72*height, pointsize,
                         bg, NA_integer_, antialias, onefile, family))
 }
 
@@ -36,7 +37,7 @@ cairo_pdf <- function(filename = if(onefile) "Rplots.pdf" else "Rplot%03d.pdf",
     if(!checkIntFormat(filename)) stop("invalid 'filename'")
     antialiases <- eval(formals()$antialias)
     antialias <- match(match.arg(antialias, antialiases), antialiases)
-    invisible(.External(devCairo, filename, 6L, 72*width, 72*height,
+    invisible(.External(C_devCairo, filename, 6L, 72*width, 72*height,
                         pointsize, bg, NA_integer_, antialias, onefile,
                         family))
 }
@@ -49,7 +50,9 @@ cairo_ps <- function(filename = if(onefile) "Rplots.ps" else "Rplot%03d.ps",
     if(!checkIntFormat(filename)) stop("invalid 'filename'")
     antialiases <- eval(formals()$antialias)
     antialias <- match(match.arg(antialias, antialiases), antialiases)
-    invisible(.External(devCairo, filename, 7L, 72*width, 72*height,
+    invisible(.External(C_devCairo, filename, 7L, 72*width, 72*height,
                         pointsize, bg, NA_integer_, antialias, onefile,
                         family))
 }
+
+cairoVersion <- function() .Call(C_cairoVersion)

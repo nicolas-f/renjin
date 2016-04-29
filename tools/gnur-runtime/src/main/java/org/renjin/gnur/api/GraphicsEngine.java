@@ -20,9 +20,19 @@ public final class GraphicsEngine {
     throw new UnimplementedGnuApiMethod("R_GE_checkVersionOrDie");
   }
 
-  // pGEDevDesc Rf_desc2GEDesc (pDevDesc dd)
-
-  // int GEdeviceNumber (pGEDevDesc)
+  public static GEDevDesc Rf_desc2GEDesc (GEDevDesc dd) {
+    throw new UnimplementedGnuApiMethod("Rf_desc2GEDESC");
+  }
+  
+  public static int GEdeviceNumber (GEDevDesc desc) {
+    throw new UnimplementedGnuApiMethod("GEdeviceNumber"); 
+  }
+  
+  public static GEDevDesc GEgetDevice(int number) {
+    throw new UnimplementedGnuApiMethod("GEgetDevice");
+  }
+  
+  
 
   // pGEDevDesc GEgetDevice (int)
 

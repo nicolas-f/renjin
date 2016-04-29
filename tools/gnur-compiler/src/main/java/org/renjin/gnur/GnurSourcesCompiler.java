@@ -179,7 +179,7 @@ public class GnurSourcesCompiler {
       compiler.addReferenceClass(Rdynload.class);
       compiler.addRecordClass("_DllInfo", DllInfo.class);
       compiler.addRecordClass("__MethodDef", MethodDef.class);
-      
+      compiler.addRecordClass("_GEDevDesc", GraphicsDevice.class);
       
       
       compiler.compile(units);

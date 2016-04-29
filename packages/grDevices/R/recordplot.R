@@ -1,6 +1,8 @@
 #  File src/library/grDevices/R/recordplot.R
 #  Part of the R package, http://www.R-project.org
 #
+#  Copyright (C) 1995-2014 The R Core Team
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
@@ -14,33 +16,25 @@
 #  A copy of the GNU General Public License is available at
 #  http://www.r-project.org/Licenses/
 
-rversion <- function() {
-  paste(R.Version()[c("major", "minor")],
-                                  collapse=".")
-}
-
 recordPlot <- function()
 {
-    if(dev.cur() == 1)
+    if(dev.cur() == 1L)
         stop("no current device to record from")
-    res <- .Internal(getSnapshot())
-    attr(res, "version") <- rversion()
+    res <- .External2(C_getSnapshot)
+    attr(res, "pid") <- Sys.getpid()
     class(res) <- "recordedplot"
     res
 }
 
 replayPlot <- function(x)
 {
-    if(class(x) != "recordedplot")
-        stop("argument is not of class \"recordedplot\"")
-    nm <- names(x)
-    version <- attr(x, "version")
-    if (is.null(version))
-        warning("loading snapshot from pre-2.0.0 R version")
-    else if (version != rversion())
-        warning(gettext("loading snapshot from different R version"),
-                " (", version, ")", domain = NA)
-    .Internal(playSnapshot(x))
+    if(!inherits(x, "recordedplot"))
+        stop(gettextf("argument is not of class %s", dQuote("recordedplot")),
+             domain = NA)
+    pid <- attr(x, "pid") ## added after R 3.0.2
+    if (is.null(pid) || pid != Sys.getpid())
+        stop("loading snapshot from a different session")
+    invisible(.External2(C_playSnapshot, x))
 }
 
 print.recordedplot <- function(x, ...)
