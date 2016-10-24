@@ -77,7 +77,7 @@ public class Primitives {
   }
 
   public static PrimitiveFunction getBuiltin(Symbol symbol) {
-    synchronized (INSTANCE) {
+  //  synchronized (INSTANCE) {
       PrimitiveFunction fn = INSTANCE.builtins.get(symbol);
       if(fn == null) {
         Entry entry = INSTANCE.builtinEntries.get(symbol);
@@ -87,11 +87,11 @@ public class Primitives {
         }
       }
       return fn;
-    }
+  //  }
   }
 
   public static PrimitiveFunction getInternal(Symbol symbol) {
-    synchronized (INSTANCE) {
+//    synchronized (INSTANCE) {
       PrimitiveFunction fn = INSTANCE.internals.get(symbol);
       if(fn == null) {
         Entry entry = INSTANCE.internalEntries.get(symbol);
@@ -101,7 +101,7 @@ public class Primitives {
         }
       }
       return fn;
-    }
+//    }
   }
 
   public static List<Entry> getEntries() {

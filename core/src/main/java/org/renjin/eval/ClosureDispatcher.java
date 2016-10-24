@@ -63,15 +63,20 @@ public class ClosureDispatcher {
     Context functionContext = callingContext.beginFunction(callingEnvironment, call, closure, promisedArgs);
     Environment functionEnvironment = functionContext.getEnvironment();
 
-    try {
-      matchArgumentsInto(closure.getFormals(), promisedArgs, functionContext, functionEnvironment);
+    matchArgumentsInto(closure.getFormals(), promisedArgs, functionContext, functionEnvironment);
 
-      if(dispatchChain != null) {
-        dispatchChain.populateEnvironment(functionEnvironment);
-      }
+    if(dispatchChain != null) {
+      dispatchChain.populateEnvironment(functionEnvironment);
+    }
+
+    return evalClosure(closure, functionContext, functionEnvironment);
+  }
+
+  public static SEXP evalClosure(Closure closure, Context functionContext, Environment functionEnvironment) {
+    try {
 
       SEXP result = closure.doApply(functionContext);
-      
+
       functionContext.exit();
 
       return result;
@@ -104,7 +109,7 @@ public class ClosureDispatcher {
       }
     }
   }
-  
+
   private static SEXP findHandler(Context context, Iterable<String> conditionClasses) {
     for(String conditionClass : conditionClasses) {
       SEXP handler = context.getConditionHandler(conditionClass);
@@ -115,7 +120,7 @@ public class ClosureDispatcher {
     return null;
   }
   
-  public static void matchArgumentsInto(PairList formals, PairList actuals, 
+  public static void matchArgumentsInto(PairList formals, PairList actuals,
       Context innerContext, Environment innerEnv) {
 
     PairList matched = matchArguments(formals, actuals);

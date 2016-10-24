@@ -119,7 +119,6 @@ public final class Symbol extends AbstractSEXP {
     addReserved(2, 
         "length",
         "mode",
-        "length",
         "any",
         "attributes",
         "matrix",

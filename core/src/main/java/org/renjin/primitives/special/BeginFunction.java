@@ -29,15 +29,11 @@ public class BeginFunction extends SpecialFunction {
   
   @Override
   public SEXP apply(Context context, Environment rho, FunctionCall call, PairList args) {
-    if(args == Null.INSTANCE) {
-      context.setInvisibleFlag();
-      return Null.INSTANCE;
-    } else {
-      SEXP lastResult = Null.INSTANCE;
-      for (SEXP sexp : call.getArguments().values()) {
-        lastResult = context.evaluate( sexp, rho);
-      }
-      return lastResult;
+
+    SEXP lastResult = Null.INSTANCE;
+    for (SEXP sexp : call.getArguments().values()) {
+      lastResult = context.evaluate( sexp, rho);
     }
+    return lastResult;
   }
 }

@@ -18,6 +18,8 @@
  */
 package org.renjin.sexp;
 
+import org.renjin.eval.specialization.CallSpecialization;
+
 /**
  * Expression representing a call to an R function, consisting of
  * a function reference and a list of arguments.
@@ -28,6 +30,9 @@ package org.renjin.sexp;
 public class FunctionCall extends PairList.Node {
   public static final String TYPE_NAME = "language";
   public static final String IMPLICIT_CLASS = "call";
+
+
+  private CallSpecialization specialization = null;
 
   public FunctionCall(SEXP function, PairList arguments) {
     super(function, arguments);
@@ -60,6 +65,15 @@ public class FunctionCall extends PairList.Node {
   @Override
   public void accept(SexpVisitor visitor) {
     visitor.visit(this);
+  }
+
+
+  public CallSpecialization getSpecialization() {
+    return specialization;
+  }
+
+  public void setSpecialization(CallSpecialization specialization) {
+    this.specialization = specialization;
   }
 
   @Override

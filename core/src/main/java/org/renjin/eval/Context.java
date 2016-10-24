@@ -23,9 +23,13 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.renjin.base.BaseFrame;
 import org.renjin.compiler.pipeline.VectorPipeliner;
+import org.renjin.eval.specialization.ASTSpecializer;
+import org.renjin.eval.specialization.CallSpecialization;
 import org.renjin.parser.RParser;
+import org.renjin.primitives.Primitives;
 import org.renjin.primitives.Warning;
 import org.renjin.primitives.packaging.NamespaceRegistry;
+import org.renjin.primitives.special.BeginFunction;
 import org.renjin.primitives.special.ControlFlowException;
 import org.renjin.primitives.vector.DeferredComputation;
 import org.renjin.primitives.vector.MemoizedComputation;
@@ -287,16 +291,35 @@ public class Context {
     }
   }
 
+  private static long CLOSURE_CALLS = 0;
+  private static long BUILTIN_CALLS = 0;
+  private static long SPEC_CALLS = 0;
+
+  public static void dumpStats() {
+    System.out.println("CLOSURE CALLS = " + CLOSURE_CALLS);
+    System.out.println("BUILTIN CALLS = " + BUILTIN_CALLS);
+    System.out.println("TOTAL   CALLS = " + BUILTIN_CALLS + CLOSURE_CALLS);
+
+    System.out.println("SPEC    CALLS = " + SPEC_CALLS);
+  }
+
   private SEXP evaluateCall(FunctionCall call, Environment rho) {
     clearInvisibleFlag();
 
     SEXP fn = call.getFunction();
     Function functionExpr = evaluateFunction(fn, rho);
 
-    boolean profiling = Profiler.ENABLED && fn instanceof Symbol && !((Symbol) fn).isReservedWord();
-    if(Profiler.ENABLED && profiling) {
-      Profiler.functionStart((Symbol)fn, functionExpr);
-    }
+//    boolean profiling = Profiler.ENABLED && fn instanceof Symbol && !((Symbol) fn).isReservedWord();
+//    if(Profiler.ENABLED && profiling) {
+//      Profiler.functionStart((Symbol)fn, functionExpr);
+//    }
+
+//    if(functionExpr instanceof Closure) {
+//      CLOSURE_CALLS++;
+//    } else {
+//      BUILTIN_CALLS++;
+//    }
+
     try {
       return functionExpr.apply(this, rho, call, call.getArguments());
     } catch (EvalException | ControlFlowException | ConditionException | Error e) {
@@ -310,15 +333,36 @@ public class Context {
       throw new EvalException(message, e);
       
     } finally {
-      if(Profiler.ENABLED && profiling) {
-        Profiler.functionEnd();
-      }
+
+//      if(Profiler.ENABLED && profiling) {
+//        Profiler.functionEnd();
+//      }
+
+//      if(fn instanceof Symbol && ((Symbol) fn).getPrintName().equals("resetCounts")) {
+//        BUILTIN_CALLS = 0;
+//        CLOSURE_CALLS = 0;
+//        SPEC_CALLS = 0;
+//        Profiler.reset();
+//        System.out.println("library() invoked -- resetting counts");
+//      }
+
     }
+  }
+
+  private SEXP evaluateBlock(FunctionCall call, Environment rho) {
+    SEXP lastResult = Null.INSTANCE;
+    for (SEXP sexp : call.getArguments().values()) {
+      lastResult = evaluate( sexp, rho);
+    }
+    return lastResult;
   }
 
   private Function evaluateFunction(SEXP functionExp, Environment rho) {
     if(functionExp instanceof Symbol) {
       Symbol symbol = (Symbol) functionExp;
+      if(symbol.isReservedWord()) {
+        return Primitives.getBuiltin(symbol);
+      }
       Function fn = rho.findFunction(this, symbol);
       if(fn == null) {
         throw new EvalException("could not find function '%s'", symbol.getPrintName());      

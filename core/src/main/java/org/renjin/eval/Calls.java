@@ -28,14 +28,6 @@ import org.renjin.sexp.*;
  */
 public class Calls {
 
-  public static PairList evaluateList(Context context, Environment rho, PairList args) {
-    PairList.Builder evaled = new PairList.Builder();
-    for(PairList.Node node : args.nodes()) {
-      evaled.add(node.getRawTag(), context.evaluate( node.getValue(), rho));
-    }
-    return evaled.build();
-  }
-
 
   public static SEXP applyClosure(Closure closure, Context context, Environment callingEnvironment, FunctionCall call, PairList promisedArgs,
                                   Frame suppliedEnvironment) {
@@ -69,8 +61,7 @@ public class Calls {
 /* form below because it is does not cause growth of the pointer */
 /* protection stack, and because it is a little more efficient. */
 
-  public static PairList promiseArgs(PairList el, Context context, Environment rho)
-  {
+  public static PairList promiseArgs(PairList el, Context context, Environment rho) {
     PairList.Builder list = new PairList.Builder();
 
     for(PairList.Node node : el.nodes()) {
@@ -104,28 +95,6 @@ public class Calls {
     return list.build();
   }
 
-  /*  usemethod  -  calling functions need to evaluate the object
- *  (== 2nd argument).  They also need to ensure that the
- *  argument list is set up in the correct manner.
- *
- *    1. find the context for the calling function (i.e. the generic)
- *       this gives us the unevaluated arguments for the original call
- *
- *    2. create an environment for evaluating the method and insert
- *       a handful of variables (.Generic, .Class and .Method) into
- *       that environment. Also copy any variables in the env of the
- *       generic that are not formal (or actual) arguments.
- *
- *    3. fix up the argument list; it should be the arguments to the
- *       generic matched to the formals of the method to be invoked */
-
-  public static PairList stripDefaultValues(PairList formals) {
-    PairList.Builder result = new PairList.Builder();
-    for(PairList.Node node : formals.nodes()) {
-      result.add(node.getRawTag(), Symbol.MISSING_ARG);
-    }
-    return result.build();
-  }
 
 
   public static void matchArgumentsInto(PairList formals, PairList actuals, Context innerContext, Environment innerEnv) {

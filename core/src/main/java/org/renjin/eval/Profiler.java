@@ -106,6 +106,7 @@ public class Profiler {
    */
   public static void reset() {
     FUNCTION_PROFILES.clear();
+    TOP_LEVEL_PROFILES.clear();
     startTime = System.nanoTime();
   }
 

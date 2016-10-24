@@ -18,6 +18,7 @@
  */
 package org.renjin.compiler.ir.tac;
 
+import org.renjin.compiler.NotCompilableException;
 import org.renjin.repackaged.guava.collect.Lists;
 import org.renjin.sexp.*;
 
@@ -43,7 +44,7 @@ public class IRMatchedArguments {
     this.arguments = arguments;
 
     if(IRArgument.anyNamed(arguments)) {
-      throw new UnsupportedOperationException("TODO");
+      throw new NotCompilableException(closure, "Named arguments not supported by compiler.");
     } else {
       matchPositionally(closure);
     }
