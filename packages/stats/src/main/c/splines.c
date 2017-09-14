@@ -43,10 +43,10 @@
 #endif
 
 #include <R.h>
-#include <R_ext/Arith.h>
 #include <R_ext/Applic.h>
 #include <stdio.h>
 #include <errno.h>
+#include <math.h>
 
 /*
  *	Natural Splines
@@ -364,17 +364,6 @@ spline_coef(int method, int n, double *x, double *y,
 
 #include <Rinternals.h>
 #include "statsR.h"
-SEXP getListElement(SEXP list, char *str)
-{
-    SEXP elmt = R_NilValue, names = getAttrib(list, R_NamesSymbol);
-
-    for (int i = 0; i < length(list); i++)
-	if(strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
-	    elmt = VECTOR_ELT(list, i);
-	    break;
-	}
-    return elmt;
-}
 
 SEXP SplineCoef(SEXP method, SEXP x, SEXP y)
 {
