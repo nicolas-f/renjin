@@ -274,20 +274,21 @@ public class IntPtr extends AbstractPtr implements Ptr {
     }
   }
 
+  public static long toUnsignedLong(int x) {
+    return ((long) x) & 0xffffffffL;
+  }
 
   /**
    * Compares the two specified {@code int} values, treating them as unsigned values between
    * {@code 0} and {@code 2^32 - 1} inclusive.
    *
-   * @deprecated Compiler will now use Java 1.8 API
    */
-  @Deprecated
   public static int unsignedCompare(int a, int b) {
-    return Integer.compareUnsigned(a, b);
+    return Integer.compare(a + Integer.MIN_VALUE, b + Integer.MIN_VALUE);
   }
 
   public static int unsignedMax(int a, int b) {
-    if(Long.compareUnsigned(a, b) > 0) {
+    if(LongPtr.compareUnsigned(a, b) > 0) {
       return a;
     } else {
       return b;
@@ -295,7 +296,7 @@ public class IntPtr extends AbstractPtr implements Ptr {
   }
 
   public static int unsignedMin(int a, int b) {
-    if(Long.compareUnsigned(a, b) < 0) {
+    if(LongPtr.compareUnsigned(a, b) < 0) {
       return a;
     } else {
       return b;
@@ -304,19 +305,15 @@ public class IntPtr extends AbstractPtr implements Ptr {
 
 
   /**
-   * @deprecated Compiler will now use Java 1.8 API
    */
-  @Deprecated
   public static int unsignedDivide(int dividend, int divisor) {
-    return Integer.divideUnsigned(dividend, divisor);
+    return (int)(toUnsignedLong(dividend) / toUnsignedLong(divisor));
   }
 
   /**
-   * @deprecated Compiler will now use Java 1.8 API
    */
-  @Deprecated
   public static int unsignedRemainder(int dividend, int divisor) {
-    return Integer.remainderUnsigned(dividend, divisor);
+    return (int)(toUnsignedLong(dividend) % toUnsignedLong(divisor));
   }
 
   public static void memcpy(IntPtr x, IntPtr y, int numBytes) {

@@ -3,7 +3,7 @@
 
   <parent>
     <artifactId>parent</artifactId>
-    <groupId>org.renjin</groupId>
+    <groupId>org.noise-planet</groupId>
     <version>1.0.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
@@ -18,11 +18,13 @@
 
   <modules>
     <module>gcc-bridge</module>
+    <!--
     <module>gnur-compiler</module>
     <module>gnur-runtime</module>
     <module>gnur-installation</module>
     <module>maven-plugin</module>
     <module>aether-package-loader</module>
     <module>packager</module>
+    -->
   </modules>
 </project>

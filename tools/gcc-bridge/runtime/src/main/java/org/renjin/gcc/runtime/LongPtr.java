@@ -19,6 +19,7 @@
 package org.renjin.gcc.runtime;
 
 
+import java.math.*;
 import java.util.Arrays;
 
 public class LongPtr extends AbstractPtr {
@@ -288,40 +289,77 @@ public class LongPtr extends AbstractPtr {
   /**
    * Returns dividend / divisor, where the dividend and divisor are treated as unsigned 64-bit
    * quantities.
-   *
-   * @deprecated Compiler will now use Java 1.8 API
    */
   @Deprecated
   public static long unsignedDivide(long dividend, long divisor) {
-    return Long.divideUnsigned(dividend, divisor);
+    if (divisor < 0L) { // signed comparison
+      // Answer must be 0 or 1 depending on relative magnitude
+      // of dividend and divisor.
+      return (compareUnsigned(dividend, divisor)) < 0 ? 0L :1L;
+    }
+
+    if (dividend > 0) { //  Both inputs non-negative
+      return dividend / divisor;
+    } else {
+      /*
+       * For simple code, leveraging BigInteger.  Longer and faster
+       * code written directly in terms of operations on longs is
+       * possible; see "Hacker's Delight" for divide and remainder
+       * algorithms.
+       */
+      return toUnsignedBigInteger(dividend).
+              divide(toUnsignedBigInteger(divisor)).longValue();
+    }
   }
 
   /**
    * Returns the unsigned remainder from dividing the first argument
    * by the second where each argument and the result is interpreted
    * as an unsigned value.
-   *
-   * @deprecated Compiler will now use Java 1.8 API
    */
   @Deprecated
   public static long unsignedRemainder(long dividend, long divisor) {
-    return Long.remainderUnsigned(dividend, divisor);
+    if (dividend > 0 && divisor > 0) { // signed comparisons
+      return dividend % divisor;
+    } else {
+      if (compareUnsigned(dividend, divisor) < 0) { // Avoid explicit check for 0 divisor
+        return dividend;
+      } else {
+        return toUnsignedBigInteger(dividend).
+                remainder(toUnsignedBigInteger(divisor)).longValue();
+      }
+    }
   }
 
+
+  /**
+   * Return a BigInteger equal to the unsigned value of the
+   * argument.
+   */
+  private static BigInteger toUnsignedBigInteger(long i) {
+    if (i >= 0L) {
+      return BigInteger.valueOf(i);
+    } else {
+      int upper = (int) (i >>> 32);
+      int lower = (int) i;
+
+      // return (upper << 32) + lower
+      return (BigInteger.valueOf(IntPtr.toUnsignedLong(upper))).shiftLeft(32).
+              add(BigInteger.valueOf(IntPtr.toUnsignedLong(lower)));
+    }
+  }
 
   /**
    * Compares the two specified {@code long} values, treating them as unsigned values between
    * {@code 0} and {@code 2^64 - 1} inclusive.
    *
-   * @deprecated Compiler will now use Java 1.8 API
    */
-  @Deprecated
   public static int compareUnsigned(long a, long b) {
-    return Long.compareUnsigned(a, b);
+    return Long.compare(a + Long.MIN_VALUE, b + Long.MIN_VALUE);
   }
 
   public static long unsignedMax(long a, long b) {
-    if(Long.compareUnsigned(a, b) > 0) {
+    if(compareUnsigned(a, b) > 0) {
       return a;
     } else {
       return b;
@@ -329,7 +367,7 @@ public class LongPtr extends AbstractPtr {
   }
 
   public static long unsignedMin(long a, long b) {
-    if(Long.compareUnsigned(a, b) < 0) {
+    if(compareUnsigned(a, b) < 0) {
       return a;
     } else {
       return b;

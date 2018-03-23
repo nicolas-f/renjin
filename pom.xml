@@ -23,7 +23,7 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.renjin</groupId>
+  <groupId>org.noise-planet</groupId>
   <artifactId>parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -43,6 +43,7 @@
   </licenses>
   
   <modules>
+    <!--
     <module>core</module>
     <module>script-engine</module>
     <module>cli</module>
@@ -51,17 +52,13 @@
     <module>test-packages</module>
     <module>repl</module>
     <module>packages</module>
+    -->
     <module>tools</module>
-    <module>studio</module>
-    <module>dist/generic</module>
-    <module>dist/deb</module>
-    <module>dist/gnur</module>
-    <module>math</module>
   </modules>
 
   <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <renjin.version>${project.version}</renjin.version>
     <renjin.display.version>${project.version}</renjin.display.version>
@@ -69,10 +66,6 @@
     <jmh.version>1.11.2</jmh.version>
     <plexusCompilerVersion>2.7</plexusCompilerVersion>
 
-    <!-- Tell Jacoco to write to a single project-wide output file -->
-    <sonar.jacoco.reportPath>${session.executionRootDirectory}/target/jacoco.exec</sonar.jacoco.reportPath>
-    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
   </properties>
 
   <scm>
@@ -80,27 +73,6 @@
     <url>scm:git:git@github.com:bedatadriven/renjin.git</url>
     <developerConnection>scm:git:git@github.com:bedatadriven/renjin.git</developerConnection>
   </scm>
-
-  <distributionManagement>
-    <repository>
-      <id>renjin-release</id>
-      <name>Renjin Releases</name>
-      <url>https://nexus.bedatadriven.com/content/repositories/renjin-release/</url>
-    </repository>
-    <snapshotRepository>
-      <id>renjin-latest</id>
-      <name>Renjin Latest Builds</name>
-      <url>https://nexus.bedatadriven.com/content/repositories/renjin-latest/</url>
-    </snapshotRepository>
-  </distributionManagement>
-
-  <repositories>
-    <repository>
-      <id>bedatadriven</id>
-      <name>bedatadriven public repo</name>
-      <url>https://nexus.bedatadriven.com/content/groups/public/</url>
-    </repository>
-  </repositories>
 
   <build>
     <plugins>
@@ -181,48 +153,6 @@
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>com.mycila</groupId>
-        <artifactId>license-maven-plugin</artifactId>
-        <version>3.0</version>
-        <configuration>
-          <inlineHeader>
-Renjin : JVM-based interpreter for the R language for the statistical analysis
-Copyright © 2010-2018 BeDataDriven Groep B.V. and contributors
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, a copy is available at
-https://www.gnu.org/licenses/gpl-2.0.txt
-          </inlineHeader>
-          <mapping>
-            <R>SCRIPT_STYLE</R>
-            <java>SLASHSTAR_STYLE</java>
-          </mapping>
-          <includes>
-            <include>**/*.java</include>
-            <include>**/*.R</include>
-          </includes>
-        </configuration>
-        <executions>
-          <execution>
-            <id>check-license</id>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <phase>verify</phase>
-          </execution>
-        </executions>
-      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -282,31 +212,6 @@ https://www.gnu.org/licenses/gpl-2.0.txt
           <configuration>
             <outputEncoding>UTF-8</outputEncoding>
             <inputEncoding>UTF-8</inputEncoding>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <versionRange>[1.2,)</versionRange>
-                    <goals>
-                      <goal>exec</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore />
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
           </configuration>
         </plugin>
       </plugins>
