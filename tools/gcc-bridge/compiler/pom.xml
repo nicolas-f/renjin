@@ -33,7 +33,7 @@
       <artifactId>renjin-guava</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.renjin</groupId>
+      <groupId>org.noise-planet</groupId>
       <artifactId>gcc-runtime</artifactId>
       <version>${project.version}</version>
     </dependency>

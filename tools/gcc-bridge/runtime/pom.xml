@@ -23,6 +23,10 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
+  <properties>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+  </properties>
   <artifactId>gcc-runtime</artifactId>
   <name>Renjin GCC Runtime</name>
   <description>Runtime classes for code translated from GCC</description>
