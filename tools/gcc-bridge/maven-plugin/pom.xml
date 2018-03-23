@@ -42,7 +42,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.renjin</groupId>
+      <groupId>org.noise-planet</groupId>
       <artifactId>gcc-bridge-compiler</artifactId>
       <version>${project.version}</version>
     </dependency>
